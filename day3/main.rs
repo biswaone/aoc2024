@@ -24,10 +24,34 @@ fn part_a(corrupted_memory: &String) -> i32{
     
 }
 
+fn part_b(corrupted_memory: &String) -> i32{
+    let re = Regex::new(r"mul\(\d+,\d+\)|do\(\)|don't\(\)").unwrap();
+    let mut flag = true; 
+    let mut total_sum = 0;
+
+    for mat in re.find_iter(&corrupted_memory) {
+        let match_str = mat.as_str();
+        if match_str == "do()" {
+            flag = true;
+        } else if match_str == "don't()" {
+            flag = false;
+        } else if flag && match_str.starts_with("mul(") {
+            let parts: Vec<&str> = match_str[4..match_str.len() - 1].split(',').collect();
+            if let (Ok(x), Ok(y)) = (parts[0].parse::<i32>(), parts[1].parse::<i32>()) {
+                total_sum += x * y;
+            }
+        }
+    }
+
+    total_sum
+}
+
 fn main() {
     let corrupted_memory = input();
     let sol_a = part_a(&corrupted_memory);
+    let sol_b = part_b(&corrupted_memory);
     println!("{}",sol_a);
+    println!("{}",sol_b);
     
 }
 
